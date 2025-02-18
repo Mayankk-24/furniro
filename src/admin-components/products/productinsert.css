@@ -1,0 +1,29 @@
+.color .span-tag .MuiButtonBase-root {
+    background: gray;
+    color: white;
+}
+
+.css-b1589m-MuiFormControl-root-MuiTextField-root .MuiInputBase-root input {
+    color: #fff;
+}
+
+.css-b1589m-MuiFormControl-root-MuiTextField-root .MuiInputBase-root input::placeholder {
+    color: #fff;
+}
+
+/* .css-b1589m-MuiFormControl-root-MuiTextField-root .MuiInputBase-root input:focus{
+    outline: none;
+    border: none;
+} */
+.color .css-b1589m-MuiFormControl-root-MuiTextField-root .MuiInputBase-root {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border: 1px solid #d1d5db;
+}
+
+.color .css-b1589m-MuiFormControl-root-MuiTextField-root .Mui-focused{
+    padding-top: 4px;
+    padding-bottom: 4px;
+    outline: none;
+    border: none;
+} 
