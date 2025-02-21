@@ -9,7 +9,7 @@ const ProfileUpload = ({ setimage }) => {
         if (file && file.type.startsWith("image/")) {
             const reader = new FileReader();
             reader.onload = () => setPreview(reader.result);
-            setimage(file)
+            setimage(file);
             reader.readAsDataURL(file);
         }
     };

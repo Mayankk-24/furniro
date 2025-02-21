@@ -105,7 +105,7 @@ function Checkout() {
             const amount = orderResponse.data.paymentResponse?.amount;
             // **Step 2: Initialize Razorpay**
             const options = {
-                key: "rzp_test_MxS2jZpZhwd7kV", // Replace with Razorpay Key
+                key: "rzp_test_pUXJB2ZJXV0sMk", // Replace with Razorpay Key
                 amount: amount,
                 currency: "INR",
                 name: "furniro",
