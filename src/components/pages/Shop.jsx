@@ -180,7 +180,7 @@ function Shop() {
                                 <div className="container px-20 py-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-10 gap-y-8 lg:gap-x-10 lg:gap-y-10">
                                     {products && products.map((item, index) => (
                                         <ProductCard
-                                            key={index}
+
                                             Cid={item._id}
                                             img={item.image}
                                             title={item.title}

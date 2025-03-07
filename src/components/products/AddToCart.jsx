@@ -13,13 +13,12 @@ let url = import.meta.env.VITE_PUBLIC_URL;
 function AddToCart({ onClose }) {
     const { removeCart } = addCartsStore();
     const [AddedProducts, setAddedProducts] = useState([]);
-    const [Loading, setLoading] = useState(false);
+    const [Loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     // console.log(p_id);
     const apiAddProduct = async () => {
         try {
-            setLoading(true);
             const authData = await auth();
             const res = await axios.get(`${url}cart/single`, {
                 headers: {
@@ -39,7 +38,7 @@ function AddToCart({ onClose }) {
         apiAddProduct();
     }, [])
 
-    const handleDelete = async (d_id,p_name) => {
+    const handleDelete = async (d_id, p_name) => {
         const authData = await auth();
         const res = await axios.delete(`${url}cart/delete/${d_id}`, {
             headers: {
@@ -79,19 +78,30 @@ function AddToCart({ onClose }) {
                     Loading ? (
                         <div className='overflow-auto h-[500px] pb-10'>
                             {
-                                [1, 2, 3].map((_, index) => {
-                                    return (
-                                        <div key={index} className='flex items-center px-6 mb-6'>
-                                            <div className='h-[105px] w-[105px]'>
-                                                <Skeleton className="rounded-lg size-full" />
-                                            </div>
-                                            <div className="w-[60%] ml-8 flex flex-col gap-2">
-                                                <Skeleton className="h-3 w-3/5 rounded-lg" />
-                                                <Skeleton className="h-3 w-4/5 rounded-lg" />
-                                            </div>
+                                // [1, 2, 3].map((_, index) => {
+                                //     return (
+                                //         <div key={index} className='flex items-center px-6 mb-6'>
+                                //             <div className='h-[105px] w-[105px]'>
+                                //                 <Skeleton className="rounded-lg size-full" />
+                                //             </div>
+                                //             <div className="w-[60%] ml-8 flex flex-col gap-2">
+                                //                 <Skeleton className="h-3 w-3/5 rounded-lg" />
+                                //                 <Skeleton className="h-3 w-4/5 rounded-lg" />
+                                //             </div>
+                                //         </div>
+                                //     );
+                                // })
+                                Array.from({ length: 3 }, (_, i) => (
+                                    <div key={i} className='flex items-center px-6 mb-6'>
+                                        <div className='h-[105px] w-[105px]'>
+                                            <Skeleton className="rounded-lg size-full" />
                                         </div>
-                                    );
-                                })
+                                        <div className="w-[60%] ml-8 flex flex-col gap-2">
+                                            <Skeleton className="h-3 w-3/5 rounded-lg" />
+                                            <Skeleton className="h-3 w-4/5 rounded-lg" />
+                                        </div>
+                                    </div>
+                                ))
                             }
                         </div>
                     ) : AddedProducts && AddedProducts.length > 0 ? (
@@ -114,7 +124,7 @@ function AddToCart({ onClose }) {
                                                 </div>
                                                 <div>
                                                     <IoCloseCircle size={28} color='#9F9F9F'
-                                                        onClick={() => handleDelete(product?.productId,product.name)} />
+                                                        onClick={() => handleDelete(product?.productId, product.name)} />
                                                 </div>
                                             </div>
                                         </div>

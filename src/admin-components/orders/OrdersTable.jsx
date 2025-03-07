@@ -348,9 +348,9 @@ function OrdersTable() {
                                     <Button color="danger" variant="light" onPress={onClose} className='focus:outline-none'>
                                         Close
                                     </Button>
-                                    <Button color="primary" onPress={onClose} className='focus:outline-none'>
+                                    {/* <Button color="primary" onPress={onClose} className='focus:outline-none'>
                                         Action
-                                    </Button>
+                                    </Button> */}
                                 </ModalFooter>
                             </>
                         )}

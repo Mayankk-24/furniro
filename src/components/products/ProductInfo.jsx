@@ -16,6 +16,7 @@ import useCompareStore from '../../manage/compareStore'
 import FeedBack from './FeedBack'
 import auth from '@/utils/Auth'
 import addCartsStore from '@/manage/addCartsStore'
+import { Icon } from '@iconify/react/dist/iconify.js'
 
 let url = import.meta.env.VITE_PUBLIC_URL;
 function ProductInfo({ cid, pid }) {
@@ -171,7 +172,7 @@ function ProductInfo({ cid, pid }) {
                         <h2 className="text-[42px] font-normal text-black">{ProductDetail?.product?.title}</h2>
                         <p className='text-2xl font-medium text-[#9F9F9F]'>Rs. {ProductDetail?.product?.price}</p>
                         <div className='flex items-center'>
-                            <Rating name="size-medium" value={ratingValue} precision={0.5} className='my-4' onChange={(e) => setRatingValue(parseInt(e.target.value))} />
+                            <Rating name="size-medium" value={ratingValue} precision={0.5} className='my-4' onChange={(e) => setRatingValue(parseInt(e.target.value))} readOnly />
                             <PiLineVerticalThin size={'28px'} color='#9F9F9F' className='mr-3' />
                             <span>{ProductDetail?.RatingData?.length || 0} customer reviews</span>
                         </div>
@@ -236,7 +237,8 @@ function ProductInfo({ cid, pid }) {
                                 +
                             </button>
                         </div>
-                        <button className='rounded-xl bg-transparent px-10 py-3' style={{ border: '2px solid black' }} onClick={() => handleAddToCart(ProductDetail?.product?._id, ProductDetail?.product?.title)} >Add To Cart</button>
+                        <button className='rounded-xl bg-transparent px-10 py-3 flex items-center' style={{ border: '2px solid black' }} onClick={() => handleAddToCart(ProductDetail?.product?._id, ProductDetail?.product?.title)} >
+                            <Icon icon="solar:cart-3-bold-duotone" width="24" height="24" style={{ color: '#000', marginRight: '10px' }} /> Add To Cart</button>
                         <button className='rounded-xl bg-transparent px-10 py-3' style={{ border: '2px solid black' }} onClick={() => {
                             handleCompare(ProductDetail?.product?._id)
                         }}>+ Compare</button>

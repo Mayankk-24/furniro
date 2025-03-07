@@ -1,6 +1,7 @@
 import addCartsStore from '@/manage/addCartsStore';
 import auth from '@/utils/Auth';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import React, { useState } from 'react'
 import { FaHeart, FaShareAlt, FaExchangeAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +32,7 @@ function ProductCard({ img, title, des, price, disprice, discount, Cid }) {
             });
             console.log(res.data);
             if (res.status === 200) {
-                toast.success('Product Added to Cart!!', { duration: 1000});
+                toast.success('Product Added to Cart!!', { duration: 1000 });
                 const addCartList = {
                     id: CartId,
                     ProductName: ProductName,
@@ -48,7 +49,11 @@ function ProductCard({ img, title, des, price, disprice, discount, Cid }) {
     return (
         <>
             {/* w-[310px] */}
-            <div className='cards relative rounded-md w-[310px]' style={{ backgroundColor: 'rgba(244, 245, 247, 1)' }}>
+            <motion.div initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                whileHover={{ y: -10 }}
+                className='cards relative rounded-md w-[310px]' style={{ backgroundColor: 'rgba(244, 245, 247, 1)' }}>
                 {discount && (
                     discount === 'New' ? (
                         <div
@@ -93,7 +98,7 @@ function ProductCard({ img, title, des, price, disprice, discount, Cid }) {
                         {disprice && <span style={{ color: 'rgba(176, 176, 176, 1)' }} className='text-lg font-normal line-through'>{discount <= 50 ? price : disprice}</span>}
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </>
     )
 }

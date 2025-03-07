@@ -2,6 +2,7 @@ import auth from '@/utils/Auth';
 import { Button, Input } from '@heroui/react'
 import axios from 'axios';
 import { useFormik } from 'formik';
+import { MotionConfig, motion } from 'framer-motion';
 import React, { useState } from 'react'
 import { LuEyeClosed } from 'react-icons/lu'
 import { RiEyeFill } from 'react-icons/ri'
@@ -69,7 +70,9 @@ function EditProfileChangePass() {
     return (
         <>
             <h2 className='text-gray-600 text-xl font-semibold px-4 py-5'>Change password</h2>
-            <form action="#" className='max-w-3xl mx-auto rounded-lg p-5 md:p-10 shadow-lg backdrop-blur-md border-2' onSubmit={formik.handleSubmit}>
+            <motion.form initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }} action="#" className='max-w-3xl mx-auto rounded-lg p-5 md:p-10 shadow-lg backdrop-blur-md border-2' onSubmit={formik.handleSubmit}>
                 <div className='mt-5'>
                     <Input
                         aria-label="toggle password visibility"
@@ -127,7 +130,7 @@ function EditProfileChangePass() {
                 <div className='mt-5 flex justify-center'>
                     <Button type='submit' isLoading={loading} className='bg-[#18181b] font-semibold text-white hover:bg-[#27272a] hover:shadow-lg w-1/2 focus:outline-none' radius='sm'>Update password</Button>
                 </div>
-            </form>
+            </motion.form>
         </>
     )
 }

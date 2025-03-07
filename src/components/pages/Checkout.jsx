@@ -7,23 +7,27 @@ import Services from '../common/Services';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
 import { CircularProgress, image } from '@nextui-org/react';
-import { Button } from '@heroui/react';
+import { Button, Card, CardBody, CardHeader } from '@heroui/react';
 import * as Yup from 'yup';
 import auth from '@/utils/Auth';
 import { toast } from 'sonner';
+import { RadioGroup, useRadio, VisuallyHidden, cn } from "@heroui/react";
+
 
 let url = import.meta.env.VITE_PUBLIC_URL;
 function Checkout() {
-    const [Select, setSelect] = useState(0);
+    const [Select, setSelect] = useState('');
     const [Checkout, setCheckout] = useState([]);
     const [Loading, setLoading] = useState(false);
     const [Total, setTotal] = useState();
     const formikRef = useRef(null);
     const navigate = useNavigate();
 
-    const toggle = (index) => {
-        setSelect(Select === index ? null : index);
+    const toggle = (e) => {
+        // setSelect(Select === index ? null : index);
+        setSelect(e.target.value)
     }
+    console.log(Select);
     const myFun = async () => {
         const authData = await auth();
         const response = await axios.get(`${url}billing/orderitems`, {
@@ -93,66 +97,68 @@ function Checkout() {
 
         setLoading(true);
         const authData = await auth();
-        try {
-            // **Step 1: Create Order in Backend**
-            const orderResponse = await axios.post(`${url}billing/payment`, value, {
-                headers: {
-                    'Authorization': `Bearer ${authData.token}`
-                }
-            });
-            console.log(orderResponse.data);
-            const orderId = orderResponse.data.paymentResponse?.orderId;
-            const amount = orderResponse.data.paymentResponse?.amount;
-            // **Step 2: Initialize Razorpay**
-            const options = {
-                key: "rzp_test_pUXJB2ZJXV0sMk", // Replace with Razorpay Key
-                amount: amount,
-                currency: "INR",
-                name: "furniro",
-                image: '/Assets/Meubel House_Logos-05.png',
-                description: "Purchase Order",
-                order_id: orderId,
-                handler: async function (response) {
-                    console.log(`Payment ID: ${response.razorpay_payment_id}`);
-                    console.log(`Order ID: ${response.razorpay_order_id}`);
-
-                    // **Step 3: Verify Payment in Backend**
-                    // await axios.post(`${url}billing/verify-payment`, {
-                    //     ...response,
-                    // });
-                    try {
-                        console.log("Payment Success:", response);
-                        navigate(`/thanks`);
-                        setLoading(false);
-                    } catch (error) {
-                        console.error("Error handling response:", error);
-                        setLoading(false);
+        if (Select == 'card') {
+            try {
+                // **Step 1: Create Order in Backend**
+                const orderResponse = await axios.post(`${url}billing/payment`, value, {
+                    headers: {
+                        'Authorization': `Bearer ${authData.token}`
                     }
-                },
-                prefill: {
-                    name: `${value.firstname} ${value.lastname}`,
-                    email: value.email,
-                    contact: value.phone,
-                },
-                notes: {
-                    "address": "Razorpay Corporate Office"
-                },
-                theme: { color: "#3399cc" },
-            };
-            setLoading(false);
-            const paymentObject = new window.Razorpay(options);
-            paymentObject.on("payment.failed", function (response) {
-                console.error("Payment Failed:", response.error);
-            });
-            paymentObject.open();
-            // if (orderResponse.data.paymentResponse.status === 500) {
-            //     toast.error('Invalid Order ID');
-            // } else {
+                });
+                console.log(orderResponse.data);
+                const orderId = orderResponse.data.paymentResponse?.orderId;
+                const amount = orderResponse.data.paymentResponse?.amount;
+                // **Step 2: Initialize Razorpay**
+                const options = {
+                    key: "rzp_test_GcvWFH9byiOHd0", // Replace with Razorpay Key
+                    amount: amount,
+                    currency: "INR",
+                    name: "furniro",
+                    image: '/Assets/Meubel House_Logos-05.png',
+                    description: "Purchase Order",
+                    order_id: orderId,
+                    handler: async function (response) {
+                        console.log(`Payment ID: ${response.razorpay_payment_id}`);
+                        console.log(`Order ID: ${response.razorpay_order_id}`);
 
-            // }
-        } catch (error) {
-            console.error("Payment Failed", error);
-            setLoading(false);
+                        // **Step 3: Verify Payment in Backend**
+                        // await axios.post(`${url}billing/verify-payment`, {
+                        //     ...response,
+                        // });
+                        try {
+                            console.log("Payment Success:", response);
+                            navigate(`/thanks`);
+                            setLoading(false);
+                        } catch (error) {
+                            console.error("Error handling response:", error);
+                            setLoading(false);
+                        }
+                    },
+                    prefill: {
+                        name: `${value.firstname} ${value.lastname}`,
+                        email: value.email,
+                        contact: value.phone,
+                    },
+                    notes: {
+                        "address": "Razorpay Corporate Office"
+                    },
+                    theme: { color: "#3399cc" },
+                };
+                setLoading(false);
+                const paymentObject = new window.Razorpay(options);
+                paymentObject.on("payment.failed", function (response) {
+                    console.error("Payment Failed:", response.error);
+                });
+                paymentObject.open();
+                // if (orderResponse.data.paymentResponse.status === 500) {
+                //     toast.error('Invalid Order ID');
+                // } else {
+
+                // }
+            } catch (error) {
+                console.error("Payment Failed", error);
+                setLoading(false);
+            }
         }
     }
 
@@ -168,7 +174,49 @@ function Checkout() {
         email: Yup.string().email('Invalid email').required('Email is required'),
         phone: Yup.string().required('Phone number is required'),
         additional: Yup.string().required('additional is required'),
-    })
+    });
+
+
+    const CustomRadio = (props) => {
+        const {
+            Component,
+            children,
+            description,
+            getBaseProps,
+            getWrapperProps,
+            getInputProps,
+            getLabelProps,
+            getLabelWrapperProps,
+            getControlProps,
+        } = useRadio(props);
+
+        return (
+            <Component
+                {...getBaseProps()}
+                className={cn(
+                    "group inline-flex items-center hover:opacity-70 active:opacity-50 justify-between flex-row-reverse tap-highlight-transparent",
+                    " cursor-pointer border-2 border-default rounded-lg gap-4 p-4 mb-3",
+                    "data-[selected=true]:border-primary",
+                )}
+            >
+                <VisuallyHidden>
+                    <input {...getInputProps()} />
+                </VisuallyHidden>
+                <span className="relative inline-flex items-center justify-center flex-shrink-0 overflow-hidden border-solid border-medium box-border border-default rounded-full group-data-[hover-unselected=true]:bg-default-100 outline-none group-data-[focus-visible=true]:z-10 group-data-[selected=true]:border-primary w-5 h-5 group-data-[pressed=true]:scale-95 transition-transform-colors motion-reduce:transition-none">
+                    <span {...getControlProps()} />
+                </span>
+                <div className='flex items-center'>
+                    {props.image && <img src={props.image} alt="" className="size-8 mr-1" />}
+                    <div {...getLabelWrapperProps()}>
+                        {children && <span {...getLabelProps()}>{children}</span>}
+                        {description && (
+                            <span className="text-small text-foreground opacity-70">{description}</span>
+                        )}
+                    </div>
+                </div>
+            </Component>
+        );
+    };
     return (
         <>
             <div className='w-full bg-cover' style={{ backgroundImage: 'url("/Assets/Rectangle 1.png")', height: '316px' }}>
@@ -314,7 +362,7 @@ function Checkout() {
                     </div>
 
                     <div className='py-5'>
-                        <div className='mb-5'>
+                        {/* <div className='mb-5'>
                             <div className='flex items-center gap-4 mb-5'>
                                 <div className={`h-4 w-4 rounded-full ${Select === 0 ? "bg-black" : "bg-transparent border-2"}`} onClick={() => toggle(0)}></div>
                                 <h2 className={`text-base  ${Select === 0 ? "text-black" : "text-gray-400"}`}>Direct Bank Transfer</h2>
@@ -340,7 +388,27 @@ function Checkout() {
                             {Select === 2 && (<div>
                                 <p className='text-[#9F9F9F] text-justify'>Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.</p>
                             </div>)}
-                        </div>
+                        </div> */}
+                        <Card className='rounded-lg pb-3 shadow-none'>
+                            <CardHeader className='text-lg font-semibold'>
+                                Payment
+                            </CardHeader>
+                            <CardBody>
+                                <RadioGroup value={Select} onChange={(e) => toggle(e)}>
+                                    <CustomRadio description="We support Mastercard, Visa, Discover and Razorpay." value="card" image={'/Assets/visa.jpg'}>
+                                        Debit/Credit Card
+                                    </CustomRadio>
+                                    <CustomRadio description="Use your digital wallet for a faster and secure checkout."
+                                        value="wallet"
+                                        image={'/Assets/wallet-svgrepo-com.jpg'}>
+                                        Wallet
+                                    </CustomRadio>
+                                    <CustomRadio description="Pay with cash upon delivery. Available for select locations." value="cod" image={'/Assets/transaction_12340964.png'}>
+                                        Cash on Delivery (COD)
+                                    </CustomRadio>
+                                </RadioGroup>
+                            </CardBody>
+                        </Card>
                         <div className='mt-7'>
                             <p className='text-black text-justify'>Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our <span className='font-semibold text-black text-justify'>privacy policy.</span></p>
                             <div className='text-center mt-8 '>

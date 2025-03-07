@@ -12,6 +12,9 @@ import { toast } from 'sonner';
 import { RiEyeFill } from 'react-icons/ri';
 import { LuEyeClosed } from 'react-icons/lu';
 import EditProfileChangePass from './EditProfileChangePass';
+import { motion, MotionConfig } from "framer-motion"
+import MyOrders from './MyOrders';
+import Wallet from './Wallet';
 
 let url = import.meta.env.VITE_PUBLIC_URL;
 function EditUserProfile() {
@@ -125,7 +128,7 @@ function EditUserProfile() {
                     <Link to={'/'} className='flex items-center gap-x-2 w-fit text-black hover:text-black transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:underline'><BsArrowLeft color='black' size={20} className='hover:-translate-x-1 transition duration-200 delay-100 ease-in-out' />Go back</Link>
                 </div>
                 <div className='p-2 md:p-5 border-b flex justify-center sm:justify-start'>
-                    <h1 className='text-lg md:text-2xl font-semibold text-gray-900'>Edit your Profile</h1>
+                    <h1 className='text-lg md:text-2xl font-semibold text-gray-900'>Account settings</h1>
                 </div>
                 <div className='flex flex-col md:flex-row pb-10'>
                     <div className='w-full md:w-2/6 md:border-r'>
@@ -136,15 +139,19 @@ function EditUserProfile() {
                         </div>
                         <div className='w-4/5 mx-auto flex flex-col gap-y-3'>
                             <div className={`py-4 text-center text-black  ${Select == 1 ? 'bg-gray-900 text-white font-medium ' : 'hover:bg-gray-300/50 hover:text-black hover:cursor-pointer'} rounded-lg  transition duration-300 ease-in-out`} onClick={() => toggle(1)}>User Profile</div>
-                            <div className={`py-4 text-center  ${Select == 2 ? 'bg-gray-900 text-white font-medium' : 'text-black hover:bg-gray-300/50 hover:cursor-pointer'} rounded-lg transition duration-300 ease-in-out`} onClick={() => toggle(2)}>Change Password</div>
+                            <div className={`py-4 text-center  ${Select == 2 ? 'bg-gray-900 text-white font-medium' : 'text-black hover:bg-gray-300/50 hover:cursor-pointer'} rounded-lg transition duration-300 ease-in-out`} onClick={() => toggle(2)}>My Orders</div>
+                            <div className={`py-4 text-center  ${Select == 3 ? 'bg-gray-900 text-white font-medium' : 'text-black hover:bg-gray-300/50 hover:cursor-pointer'} rounded-lg transition duration-300 ease-in-out`} onClick={() => toggle(3)}>Change Password</div>
+                            <div className={`py-4 text-center  ${Select == 4 ? 'bg-gray-900 text-white font-medium' : 'text-black hover:bg-gray-300/50 hover:cursor-pointer'} rounded-lg transition duration-300 ease-in-out`} onClick={() => toggle(4)}>Wallet</div>
                         </div>
                     </div>
                     <div className='w-full md:w-2/3 px-5'>
                         {
                             Select == 1 && (
                                 <>
-                                    <h2 className='text-gray-600 text-xl font-semibold px-4 py-5'>Account settings</h2>
-                                    <form action="#" className='max-w-3xl mx-auto rounded-lg p-5 md:p-10 shadow-lg backdrop-blur-md border-2' onSubmit={formik.handleSubmit}>
+                                    <h2 className='text-gray-600 text-xl font-semibold px-4 py-5'>Edit your Profile</h2>
+                                    <motion.form initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.4 }} action="#" className='max-w-3xl mx-auto rounded-lg p-5 md:p-10 shadow-lg backdrop-blur-md border-2' onSubmit={formik.handleSubmit}>
                                         <div className='flex items-center gap-x-3'>
                                             <div className='w-full'>
                                                 <Input
@@ -232,16 +239,31 @@ function EditUserProfile() {
                                         <div className='mt-5 flex justify-center'>
                                             <Button type='submit' isLoading={loading} className='bg-[#18181b] font-semibold text-white hover:bg-[#27272a] hover:shadow-lg w-1/2 focus:outline-none' radius='sm'>Save changes</Button>
                                         </div>
-                                    </form>
+                                    </motion.form>
                                 </>
                             )
                         }
                         {
                             Select == 2 && (
                                 <>
+                                    <MyOrders />
+                                </>
+
+                            )
+                        }
+                        {
+                            Select == 3 && (
+                                <>
                                     <EditProfileChangePass />
                                 </>
 
+                            )
+                        }
+                        {
+                            Select == 4 && (
+                                <>
+                                    <Wallet />
+                                </>
                             )
                         }
                     </div>

@@ -13,6 +13,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Card, 
 import { MdDelete } from 'react-icons/md';
 import { FiMinus, FiPlus } from 'react-icons/fi';
 import { FaMinus } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const url = import.meta.env.VITE_PUBLIC_URL;
 
@@ -23,48 +24,49 @@ function Cart() {
     const hasFetched = useRef(false); // Ref to ensure we fetch data only once
     const [orderPlaced, setOrderPlaced] = useState();
     const { removeCart } = addCartsStore();
-    const [Quantity, setQuantity] = useState([]);
+    const [Quantity, setQuantity] = useState(0);
 
+    const fetchCart = async () => {
+        // Check if an order has already been placed in localStorage
+        // const orderPlaced = localStorage.getItem('orderPlaced');
+        if (hasFetched.current || orderPlaced) return;
+
+        hasFetched.current = true; // Set flag immediately to avoid double execution
+
+        const authData = await auth();
+        try {
+            // const localCart = JSON.parse(localStorage.getItem('carts'));
+            // if (!localCart) {
+            //     toast.error('No items in cart');
+            //     setLoading(false);
+            //     return;
+            // }
+            // Place the order
+            const response = await axios.get(`${url}order/single`, {
+                headers: {
+                    'Authorization': `Bearer ${authData.token}`,
+
+                },
+            });
+            console.log(response.data.order);
+            setCart(response.data.order);
+            const quantities = response.data.order.map(item => item.quantity);
+            setQuantity(quantities);
+            // Mark the order as placed in localStorage
+            // localStorage.setItem('orderPlaced', 'true');
+            setOrderPlaced(true);
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to fetch cart');
+        } finally {
+            // setLoading(false); // Always update loading state
+        }
+    };
     useEffect(() => {
-        const fetchCart = async () => {
-            // Check if an order has already been placed in localStorage
-            // const orderPlaced = localStorage.getItem('orderPlaced');
-            if (hasFetched.current || orderPlaced) return;
-
-            hasFetched.current = true; // Set flag immediately to avoid double execution
-
-            const authData = await auth();
-            try {
-                // const localCart = JSON.parse(localStorage.getItem('carts'));
-                // if (!localCart) {
-                //     toast.error('No items in cart');
-                //     setLoading(false);
-                //     return;
-                // }
-                // Place the order
-                const response = await axios.get(`${url}order/single`, {
-                    headers: {
-                        'Authorization': `Bearer ${authData.token}`,
-                    },
-                });
-                console.log(response.data.order);
-                setCart(response.data.order);
-                const quantities = response.data.order.map(item => item.quantity);
-                setQuantity(quantities);
-                // Mark the order as placed in localStorage
-                // localStorage.setItem('orderPlaced', 'true');
-                setOrderPlaced(true);
-            } catch (error) {
-                console.error(error);
-                toast.error('Failed to fetch cart');
-            } finally {
-                // setLoading(false); // Always update loading state
-            }
-        };
-
         fetchCart();
-    }, [url]);
-    const handleDelete = async (id, productId,p_name) => {
+    }, [url, Quantity]);
+
+    const handleDelete = async (id, productId, p_name) => {
         const authData = await auth();
         try {
             const response = await axios.delete(`${url}order/delete/${id}`, {
@@ -91,19 +93,40 @@ function Cart() {
         }
     };
 
-    const handleQuantityChange = (index, type) => {
-        setQuantity(prevQuantities => {
-            const newQuantities = [...prevQuantities];
+    const handleQuantityChange = async (index, type, id) => {
+        let newQuantity = Quantity[index];
 
-            if (type === 'increment') {
-                newQuantities[index] += 1;
-            } else if (type === 'decrement' && newQuantities[index] > 0) {
-                newQuantities[index] -= 1;
+        if (type === 'increment' && newQuantity < 15) {
+            newQuantity += 1;
+        }
+        else if (type === 'decrement' && newQuantity > 0) {
+            newQuantity -= 1;
+        }
+        else {
+            return;
+        }
+        const authToken = await auth();
+        try {
+            const res = await axios.patch(`${url}cart/update/${id}?quantity=${newQuantity}`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${authToken.token}`,
+                },
+            });
+            // fetchCart();
+            if (res.status === 200) {
+                setQuantity(prevQuantities => {
+                    const updatedQuantities = [...prevQuantities];
+                    updatedQuantities[index] = newQuantity;
+                    return updatedQuantities;
+                });
+                toast.success('Quantity updated successfully');
             }
-
-            return newQuantities;
-        });
+        } catch (error) {
+            console.log(error);
+            toast.error('Failed to update quantity');
+        }
     };
+    console.log(Quantity)
     // Render loading skeleton if cart is loading
     // if (loading) {
     //     return (
@@ -133,7 +156,9 @@ function Cart() {
 
             <div className='py-14 px-16'>
                 <div className='flex flex-col gap-y-5 md:flex-row justify-center'>
-                    <div className='w-full md:w-3/4 mr-9'>
+                    <motion.div initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }} className='w-full md:w-3/4 mr-9'>
                         <Table aria-label="Example static collection table" classNames={{
                             th: 'bg-[#F9F1E7] text-black',
                             wrapper: [
@@ -148,52 +173,6 @@ function Cart() {
                                 <TableColumn>Subtotal</TableColumn>
                                 <TableColumn></TableColumn>
                             </TableHeader>
-                            {/* <TableBody>
-                                {cart && cart.length > 0 ? (
-                                    cart.map((item, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>
-                                                <img src={item.image} alt="" className='size-20 rounded-lg' />
-                                            </TableCell>
-                                            <TableCell className='text-[#9F9F9F] font-normal'>{item.name}</TableCell>
-                                            <TableCell className='text-[#9F9F9F] font-normal'>Rs. {item.price}</TableCell>
-                                            <TableCell>
-                                                <ButtonGroup>
-                                                    <Button isIconOnly size='sm' className='bg-transparent border-1 focus:outline-none' variant='bordered' onPress={() => handleQuantityChange(index, 'decrement')} isDisabled={Quantity[index] == 0}><FiMinus size={16} />
-                                                    </Button>
-                                                    <div className='bg-[#919eab14] w-fit py-1.5 px-3'>
-                                                        {Quantity[index]}
-                                                    </div>
-                                                    <Button isIconOnly size='sm' className='bg-transparent border-1 focus:outline-none' variant="bordered" onPress={() => handleQuantityChange(index, 'increment')}isDisabled={Quantity[index] == 15}><FiPlus size={16} /></Button>
-                                                </ButtonGroup>
-                                            </TableCell>
-                                            <TableCell>Rs. {(item.price * item.quantity).toLocaleString()}</TableCell>
-                                            <TableCell>
-                                                <button className='p-1 rounded-full bg-transparent hover:bg-gray-200/30 transition-background focus:outline-none' onClick={() => handleDelete(item?._id, item?.productId)}><img src="/Assets/Delete.svg" alt="" className='size-5' /></button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell className='px-10'></TableCell>
-                                        <TableCell className='px-14'></TableCell>
-                                        <TableCell className="py-5">
-                                            <div className="flex flex-col items-center justify-center">
-                                                <img src="/Assets/ic-cart.svg" alt="Empty Cart" className='h-36 w-36' />
-                                                <h2 className='text-[#919EAB] text-2xl font-medium mb-4'>
-                                                    Cart is empty!
-                                                </h2>
-                                                <p className='text-[#919EAB] text-sm font-medium mb-4'>
-                                                    Looks like you have no items in your shopping cart.
-                                                </p>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className='px-5'></TableCell>
-                                        <TableCell className='px-5'></TableCell>
-                                        <TableCell className='px-5'></TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody> */}
                             <TableBody emptyContent={<div className="flex flex-col items-center justify-center">
                                 <img src="/Assets/ic-cart.svg" alt="Empty Cart" className='h-36 w-36' />
                                 <h2 className='text-[#919EAB] text-2xl font-medium mb-4'>
@@ -212,12 +191,12 @@ function Cart() {
                                         <TableCell className='text-[#9F9F9F] font-normal'>Rs. {item.price}</TableCell>
                                         <TableCell>
                                             <ButtonGroup>
-                                                <Button isIconOnly size='sm' className='bg-transparent border-1 focus:outline-none' variant='bordered' onPress={() => handleQuantityChange(index, 'decrement')} isDisabled={Quantity[index] == 0}><FiMinus size={16} />
+                                                <Button isIconOnly size='sm' className='bg-transparent border-1 focus:outline-none' variant='bordered' onPress={() => handleQuantityChange(index, 'decrement', item?.productId)} isDisabled={Quantity[index] == 0}><FiMinus size={16} />
                                                 </Button>
                                                 <div className='bg-[#919eab14] w-fit py-1.5 px-3'>
                                                     {Quantity[index]}
                                                 </div>
-                                                <Button isIconOnly size='sm' className='bg-transparent border-1 focus:outline-none' variant="bordered" onPress={() => handleQuantityChange(index, 'increment')} isDisabled={Quantity[index] == 15}><FiPlus size={16} /></Button>
+                                                <Button isIconOnly size='sm' className='bg-transparent border-1 focus:outline-none' variant="bordered" onPress={() => handleQuantityChange(index, 'increment', item?.productId)} isDisabled={Quantity[index] == 15}><FiPlus size={16} /></Button>
                                             </ButtonGroup>
                                         </TableCell>
                                         <TableCell>Rs. {(item.price * item.quantity).toLocaleString()}</TableCell>
@@ -228,8 +207,10 @@ function Cart() {
                                 ))}
                             </TableBody>
                         </Table>
-                    </div>
-                    <div>
+                    </motion.div>
+                    <motion.div initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 }}>
                         <Card className='w-[393px] bg-[#F9F1E7] h-fit px-10 shadow-md pb-3'>
                             <CardHeader className='flex justify-center'>
                                 <h2 className='text-black text-[32px] font-semibold text-center'>Cart Totals</h2>
@@ -270,7 +251,7 @@ function Cart() {
                                 Check Out
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
 

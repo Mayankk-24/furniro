@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { LuMoveLeft, LuMoveRight } from 'react-icons/lu';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import auth from '@/utils/Auth';
 
 let url = import.meta.env.VITE_ADMIN_URL;
 const PRODUCTS_PER_PAGE = 5; // Number of products per page
@@ -114,10 +115,11 @@ function UserTable() {
 
     const handleChange = async (id, status) => {
         // console.log(id, status)
+        const authToken = await auth();
         try {
-            const res = await axios.put(`${url}users/status/${id}?status=${status}`, {
+            const res = await axios.put(`${url}users/status/${id}?status=${status}`, {}, {
                 headers: {
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken.token}`
                 }
             });
             console.log(res.data);

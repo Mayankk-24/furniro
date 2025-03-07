@@ -77,7 +77,7 @@ function FeedBack({ id }) {
                                 <Textarea label="Description" placeholder="Enter your description" name='review' variant='bordered'
                                     {...formik.getFieldProps('review')}
                                 />
-                                {formik.touched.review && formik.errors.review ? (<div className='text-xs text-[#FF5630] font-medium px-2 pt-2'>{formik.errors.review}</div>): null}
+                                {formik.touched.review && formik.errors.review ? (<div className='text-xs text-[#FF5630] font-medium px-2 pt-2'>{formik.errors.review}</div>) : null}
                             </div>
                             <div>
                                 <Button isLoading={Loading} type='submit' className="bg-[#18181b] hover:bg-[#3f3f46] hover:shadow-md text-white font-bold py-2 px-4 rounded-md focus:outline-none transition-colors duration-200 ease-in-out w-56">Submit</Button>

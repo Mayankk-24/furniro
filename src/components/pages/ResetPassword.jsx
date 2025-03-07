@@ -9,6 +9,8 @@ import { GoChevronLeft } from 'react-icons/go';
 import { RiEyeFill, RiEyeOffFill } from 'react-icons/ri';
 import { Link, useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
+import { motion } from 'framer-motion';
+
 
 let url = import.meta.env.VITE_PUBLIC_URL;
 function ResetPassword() {
@@ -65,7 +67,11 @@ function ResetPassword() {
                     </div>
                 </Box>
                 <Box sx={{ width: '64%', height: '100vh', display: 'flex', alignItems: 'center' }}>
-                    <div className="h-full w-full p-10  lg:h-fit lg:w-1/2 lg:mx-auto lg:p-0">
+                    <motion.div
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                        className="h-full w-full p-10  lg:h-fit lg:w-1/2 lg:mx-auto lg:p-0">
                         <div className='flex flex-col items-center justify-center'>
                             <img src="/Assets/reset-password.svg" alt="" className='h-24 w-24 mb-8' />
                             <h5 className='text-[#1C252E] text-center font-bold text-[1.1875rem] mb-4'>Forgot your password?</h5>
@@ -78,15 +84,15 @@ function ResetPassword() {
                                     <Input label="Email address" type="email" name='email' variant={'bordered'} isInvalid={formik.touched.email && Boolean(formik.errors.email)} {...formik.getFieldProps('email')} />
                                     {formik.touched.email && formik.errors.email ? <div className='text-xs text-[#FF5630] font-medium px-2 pt-2'>{formik.errors.email}</div> : null}
                                 </div>
-                                <div className='mt-6'>
+                                <motion.div  whileHover={{ scale: 1.03 }} transition={{ duration: 0.2 }} className='mt-6'>
                                     <Button type='submit' isLoading={Loading} className='bg-[#18181b] font-semibold text-white hover:bg-[#27272a] hover:shadow-lg w-full'>Send request</Button>
-                                </div>
+                                </motion.div>
                             </form>
-                            <div className='flex justify-center mt-8'>
+                            <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.2 }} className='flex justify-center mt-8'>
                                 <Link className='text-[#1C252E] text-sm font-medium hover:text-[#1C252E] hover:underline flex items-center gap-1' to={'/signin'}><GoChevronLeft />Return to sign in</Link>
-                            </div>
+                            </motion.div>
                         </div>
-                    </div>
+                    </motion.div>
                 </Box>
 
             </main >

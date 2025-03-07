@@ -9,6 +9,8 @@ import { MdErrorOutline } from 'react-icons/md';
 import { RiEyeFill, RiEyeOffFill } from 'react-icons/ri';
 import { Link, useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
+import { motion } from 'framer-motion';
+
 
 let url = import.meta.env.VITE_PUBLIC_URL;
 function SingUpPage() {
@@ -102,7 +104,10 @@ function SingUpPage() {
                         md: '64%',
                     }, height: '100vh', display: 'flex', alignItems: 'center'
                 }}>
-                    <div className="h-full w-full p-10 lg:h-fit lg:w-1/2 lg:mx-auto lg:p-0">
+                    <motion.div initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                        className="h-full w-full p-10 lg:h-fit lg:w-1/2 lg:mx-auto lg:p-0">
                         <h5 className='text-[#1C252E] text-left font-bold text-[1.1875rem] mb-4'>Get started absolutely free</h5>
                         <p className='text-[#637381] text-left font-normal text-sm'>Already have an account? <Link className='text-[#00A76F] font-semibold hover:underline hover:text-[#00A76F]' to={'/signin'}>Get started</Link></p>
 
@@ -135,7 +140,7 @@ function SingUpPage() {
                                         aria-label="toggle password visibility"
                                         name='password'
                                         endContent={isVisible ? (
-                                            <RiEyeFill className="text-2xl text-default-400 cursor-pointer" onClick={() => setIsVisible(!isVisible)} />
+                                            <RiEyeFill className="text-2xl cursor-pointer" onClick={() => setIsVisible(!isVisible)} />
                                         ) : (
                                             <LuEyeClosed className="text-2xl text-default-400 cursor-pointer" onClick={() => setIsVisible(!isVisible)} />
                                         )}
@@ -148,9 +153,9 @@ function SingUpPage() {
                                     />
                                     {formik.touched.password && formik.errors.password ? <div className='text-xs text-[#FF5630] font-medium px-2 pt-2'>{formik.errors.password}</div> : null}
                                 </div>
-                                <div className='mt-6'>
-                                    <Button type='submit' isLoading={loading} className='bg-[#18181b] font-semibold text-white hover:bg-[#27272a] hover:shadow-lg w-full'>Create account</Button>
-                                </div>
+                                <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.2 }}  className='mt-6'>
+                                    <Button type='submit' isLoading={loading} className='bg-[#18181b] font-semibold text-white hover:bg-[#27272a] hover:shadow-lg w-full focus:outline-none'>Create account</Button>
+                                </motion.div>
                             </form>
 
                             <div>
@@ -161,7 +166,7 @@ function SingUpPage() {
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </Box>
 
             </main >

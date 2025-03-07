@@ -17,9 +17,9 @@ import SignIn from './components/pages/SignIn'
 import ResetPassword from './components/pages/ResetPassword'
 import UpdatePass from './components/pages/UpdatePass'
 import Auth from './Auth'
-import EditUserProfile from './components/pages/EditUserProfile'
 import Error404 from './components/pages/Error404'
 import Thankyou from './components/pages/Thankyou'
+import EditUserProfile from './components/userEditProfile/EditUserProfile'
 
 let ProductId = createContext();
 function App() {
