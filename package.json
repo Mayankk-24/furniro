@@ -38,6 +38,7 @@
     "react-router-dom": "^6.28.0",
     "recharts": "^2.12.7",
     "sonner": "^1.7.4",
+    "sweetalert2": "^11.17.2",
     "yup": "^1.6.1",
     "zustand": "^5.0.2"
   },
