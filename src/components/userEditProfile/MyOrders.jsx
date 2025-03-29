@@ -1,6 +1,9 @@
+import auth from "@/utils/Auth";
 import { Button } from "@heroui/react";
+import axios from "axios";
 import { motion } from "framer-motion";
 import { HandHelping } from "lucide-react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 const orders = [
@@ -69,7 +72,26 @@ const handleCancelOrder = (orderId) => {
       }
     });
 };
+let url = import.meta.env.VITE_PUBLIC_URL;
 function MyOrders() {
+  const [Orders, setOrders] = useState([])
+  const getOrders = async () => {
+    const authData = await auth();
+    try {
+      const res = await axios.get(`${url}account/getuserpurchases`, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      });
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getOrders();
+  }, []);
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h2 className="text-gray-600 text-xl font-semibold px-4 py-5">

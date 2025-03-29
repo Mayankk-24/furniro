@@ -21,6 +21,7 @@ function EditUserProfile() {
   const [loading, setLoading] = useState(false);
   const [Select, setSelect] = useState(1);
   const [isVisible, setIsVisible] = useState(false);
+  const [Wallets, setWallet] = useState(0);
 
   const toggle = (index) => {
     setSelect(index);
@@ -102,6 +103,7 @@ function EditUserProfile() {
         },
       });
       console.log(res.data.data);
+      setWallet(res.data.data.wallet);
       const data = res.data.data;
       setinitialValues({
         firstname: data.firstname || "",
@@ -395,7 +397,7 @@ function EditUserProfile() {
             )}
             {Select == 4 && (
               <>
-                <Wallet />
+                <Wallet amount={Wallets} />
               </>
             )}
           </div>

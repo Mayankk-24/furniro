@@ -31,6 +31,11 @@ const OrderSchema = mongoose.Schema({
         enum: ["Pending", "Processing", "Delivered"],
         default: "Pending"
     },
+    orderType: {
+        type: String,
+        enum: ["card/upi", "wallet"],
+        default: "wallet"
+    },
     orderdate: {
         type: Date,
         default: Date.now

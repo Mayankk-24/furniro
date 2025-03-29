@@ -15,9 +15,9 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { ArrowUp, ArrowDown } from "lucide-react";
 
-const Wallet = () => {
+const Wallet = ({amount}) => {
   const [balance, setBalance] = useState(0);
-  const [amount, setAmount] = useState("");
+  // const [amount, setAmount] = useState("");
   const [transactions, setTransactions] = useState([]);
 
   const url = import.meta.env.VITE_PUBLIC_URL;
@@ -29,36 +29,12 @@ const Wallet = () => {
   const fetchWalletData = async () => {
     const authData = await auth();
     try {
-      const res = await axios.get(`${url}wallet/balance`, {
+      const res = await axios.get(`${url}account/wallettransacation`, {
         headers: { Authorization: `Bearer ${authData.token}` },
       });
-      setBalance(res.data.balance);
       setTransactions(res.data.transactions);
     } catch (error) {
       console.error(error);
-    }
-  };
-
-  const addFunds = async () => {
-    if (!amount || amount <= 0) {
-      toast.error("Enter a valid amount.");
-      return;
-    }
-
-    const authData = await auth();
-    try {
-      const res = await axios.post(
-        `${url}wallet/add`,
-        { amount },
-        { headers: { Authorization: `Bearer ${authData.token}` } }
-      );
-      toast.success("Amount added successfully!");
-      setBalance(res.data.newBalance);
-      setTransactions(res.data.transactions);
-      setAmount("");
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to add funds.");
     }
   };
 
@@ -118,7 +94,7 @@ const Wallet = () => {
         Wallet
       </h2>
       <p className="text-gray-600 mt-2 text-center">
-        Your balance: <strong className="text-black text-lg">${balance}</strong>
+        Your current balance: <strong className="text-black text-lg">₹{amount}</strong>
       </p>
 
       {/* <motion.div
@@ -215,7 +191,7 @@ const Wallet = () => {
               </div>
             }
           >
-            {transactionHistory.map((txn) => (
+            {transactions.map((txn) => (
               <TableRow key={txn.id}>
                 <TableCell>
                   <span
@@ -238,12 +214,12 @@ const Wallet = () => {
                       txn.type === "credit" ? "text-green-600" : "text-red-600"
                     }`}
                   >
-                    {txn.type === "credit" ? "+" : "-"}${txn.amount}
+                    {txn.type === "credit" ? "+" : "-"}₹{txn.amount}
                   </span>
                 </TableCell>
                 <TableCell>
                   {" "}
-                  {new Date(txn.date).toLocaleDateString()}
+                  {new Date(txn.createdAt).toLocaleDateString()}
                 </TableCell>
               </TableRow>
             ))}

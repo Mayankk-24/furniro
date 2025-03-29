@@ -8,17 +8,20 @@ exports.payment = async ({ username, email, product, quantity, amount }) => {
     try {
         const parsedAmount = parseInt(amount, 10);
         const parsedQuantity = parseInt(quantity, 10);
+
         if (isNaN(parsedAmount) || isNaN(parsedQuantity) || parsedAmount <= 0 || parsedQuantity <= 0) {
             return {
                 status: 400,
                 message: "Amount and quantity must be valid numbers greater than zero",
             };
         }
-        const totalAmount = parsedAmount * parsedQuantity * 100;
+
+        const totalAmount = parsedAmount * parsedQuantity;
+
         const options = {
             amount: totalAmount,
             currency: "INR",
-            receipt: `${email}`,
+            receipt: `${email}-${Date.now()}`,
             payment_capture: 1,
             notes: {
                 product_name: product,
@@ -26,21 +29,10 @@ exports.payment = async ({ username, email, product, quantity, amount }) => {
                 email,
             },
         };
-        const createNewOrder = async (options) => {
-            try {
-                const order = await razorpay.orders.create(options);
-                return order;
-            } catch (error) {
-                console.error("Error creating order:", error);
-                throw new Error("Failed to create order");
-            }
-        }
-        const order = await createNewOrder(options);
+
+        const order = await razorpay.orders.create(options);
         if (!order) {
-            return {
-                status: 400,
-                message: "Order creation failed",
-            };
+            return { status: 400, message: "Order creation failed" };
         }
 
         return {
@@ -51,10 +43,35 @@ exports.payment = async ({ username, email, product, quantity, amount }) => {
             notes: order.notes,
         };
     } catch (err) {
-        console.log(err)
+        console.error("Payment error:", err);
         return {
-            status: err.status || 500,
+            status: 500,
             message: err.message || "Payment creation failed",
         };
     }
 };
+
+
+exports.refund = async ({ paymentId, reason, billing }) => { // Added billing as a parameter
+    try {
+        const refund = await razorpay.payments.refund(paymentId, {  // orderId should be a valid payment_id
+            amount: billing.total * 100, // Use billing.total from parameter
+            speed: "normal",
+            notes: {
+                reason
+            }
+        });
+        return {
+            status: 200,
+            message: "Refund successful",
+            refund
+        };
+    } catch (error) {
+        console.log(error); // Fix: Log the correct error variable
+        return {
+            status: error.status || 500,
+            message: error.message || "Refund creation failed",
+        };
+    }
+};
+

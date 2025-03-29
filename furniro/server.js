@@ -17,6 +17,9 @@ mongoose.connect(process.env.MONGODB_KEY)
     .then(() => console.log("Connected to MongoDB"))
     .catch(err => console.error("Error connecting to MongoDB", err));
 
+
+app.use("/", require("./router/Razorpaywebhook"));
+
 //user
 const user = require("./router/user/user.route");
 const product = require("./router/user/product.route");
@@ -73,3 +76,4 @@ app.listen(port, (err) => {
         console.log(`Server is running on port ${port}`);
     }
 })
+

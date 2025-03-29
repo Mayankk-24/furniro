@@ -19,6 +19,8 @@
     "@nextui-org/react": "^2.4.8",
     "@react-google-maps/api": "^2.20.5",
     "@stripe/stripe-js": "^5.4.0",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.8.1",
     "axios": "^1.7.7",
     "embla-carousel": "^8.5.2",
     "embla-carousel-react": "^8.5.2",

@@ -54,6 +54,9 @@ const UserSchema = mongoose.Schema(
     },
     otp: {
       type: Number
+    },
+    orderId: {
+      type: String
     }
   },
   {

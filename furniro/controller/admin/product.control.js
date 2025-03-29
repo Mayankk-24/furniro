@@ -186,7 +186,6 @@ exports.updateProduct = async (req, res) => {
     }
 };
 
-
 exports.allProduct = async (req, res) => {
     try {
         var field = req.query.sort || "title";

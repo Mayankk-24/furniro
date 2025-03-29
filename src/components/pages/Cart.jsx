@@ -28,34 +28,20 @@ import { MdDelete } from "react-icons/md";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { FaMinus } from "react-icons/fa";
 import { motion } from "framer-motion";
+import ParticlesBackground from "@/particles/ParticlesBackground";
+import HeroCard from "../common/HeroCard";
 
 const url = import.meta.env.VITE_PUBLIC_URL;
-
 function Cart() {
   const [cart, setCart] = useState([]);
   // const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const hasFetched = useRef(false); // Ref to ensure we fetch data only once
-  const [orderPlaced, setOrderPlaced] = useState();
   const { removeCart } = addCartsStore();
   const [Quantity, setQuantity] = useState(0);
 
   const fetchCart = async () => {
-    // Check if an order has already been placed in localStorage
-    // const orderPlaced = localStorage.getItem('orderPlaced');
-    // if (hasFetched.current || orderPlaced) return;
-
-    // hasFetched.current = true; // Set flag immediately to avoid double execution
-
     const authData = await auth();
     try {
-      // const localCart = JSON.parse(localStorage.getItem('carts'));
-      // if (!localCart) {
-      //     toast.error('No items in cart');
-      //     setLoading(false);
-      //     return;
-      // }
-      // Place the order
       const response = await axios.get(`${url}order/single`, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
@@ -65,19 +51,14 @@ function Cart() {
       setCart(response.data.order);
       const quantities = response.data.order.map((item) => item.quantity);
       setQuantity(quantities);
-      // Mark the order as placed in localStorage
-      // localStorage.setItem('orderPlaced', 'true');
-      setOrderPlaced(true);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to fetch cart");
-    } finally {
-      // setLoading(false); // Always update loading state
     }
   };
+
   useEffect(() => {
     fetchCart();
-  }, [url, Quantity]);
+  }, []);
 
   const handleDelete = async (id, productId, p_name) => {
     const authData = await auth();
@@ -141,43 +122,10 @@ function Cart() {
       toast.error("Failed to update quantity");
     }
   };
-  console.log(Quantity);
-  // Render loading skeleton if cart is loading
-  // if (loading) {
-  //     return (
-  //         <div className='w-full py-16'>
-  //             <Skeleton className='w-full h-full rounded-lg' />
-  //         </div>
-  //     );
-  // }
 
   return (
     <>
-      <div
-        className="w-full bg-cover"
-        style={{
-          backgroundImage: 'url("/Assets/Rectangle 1.png")',
-          height: "316px",
-        }}
-      >
-        <div className="flex items-center justify-center h-full">
-          <div>
-            <div className="flex justify-center mb-3">
-              <img src="/Assets/Meubel House_Logos-05.png" alt="Logo" />
-            </div>
-            <h2 className="text-center text-black text-5xl font-medium mb-4">
-              Cart
-            </h2>
-            <div className="flex items-center justify-center">
-              <Link to={"/"} className="text-black text-base font-medium">
-                Home
-              </Link>
-              <LuChevronRight className="mx-2" size={"18px"} color="black" />
-              <span>Cart</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <HeroCard name={"Cart"} />
 
       <div className="py-14 px-16">
         <div className="flex flex-col gap-y-5 md:flex-row justify-center">
