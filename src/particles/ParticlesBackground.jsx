@@ -20,7 +20,7 @@ const ParticlesBackground = () => {
   };
   return (
     <>
-      <div className="part" style={{ width: "100%", height: "400px" }}>
+      <div className="part" style={{ width: "100%", height: "100%" }}>
         {init && (
           <Particles
             id="tsparticles"
@@ -60,7 +60,7 @@ const ParticlesBackground = () => {
               },
               particles: {
                 color: {
-                  value: "#fff",
+                  value: "#B88E2F",
                 },
                 links: {
                   color: "#ffffff",

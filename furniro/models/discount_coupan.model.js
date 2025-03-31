@@ -8,10 +8,6 @@ const DiscountSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    startDate: {
-        type: Date,
-        required: true
-    },
     endDate: {
         type: Date,
         required: true
@@ -19,10 +15,6 @@ const DiscountSchema = mongoose.Schema({
     description: {
         type: String,
         required: true
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
 }, {
     timestamps: true

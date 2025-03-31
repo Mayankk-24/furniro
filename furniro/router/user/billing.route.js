@@ -8,7 +8,7 @@ router.put("/payment-success",auth,BillingControl.paymentSuccess);
 router.get("/orderitems", auth, BillingControl.orderitems);
 router.get("/status/:orderId", auth, BillingControl.orderstatus);
 router.post("/refund", auth, BillingControl.refundRequest);
-router.post("/cancle/:Id", auth, BillingControl.cancleRequest);
+router.post("/cancle/:Id", auth, BillingControl.cancelRequest);
 router.post("/walletpayment", auth, BillingControl.walletPayment);
 
 module.exports = router;

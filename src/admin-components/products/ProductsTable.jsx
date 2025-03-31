@@ -1,43 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Edit, Search, Trash2 } from 'lucide-react';
-import { Button, Tooltip } from '@nextui-org/react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'sonner';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Edit, Search, Trash2 } from "lucide-react";
+import { Button, Tooltip } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "sonner";
 
 const PRODUCTS_PER_PAGE = 5; // Number of products per page
 let url = import.meta.env.VITE_ADMIN_URL;
 function ProductsTable() {
   const [ProductData, setProductData] = useState([]);
   const navigate = useNavigate();
-  const [searchItem, setSearchItem] = useState('');
+  const [searchItem, setSearchItem] = useState("");
   const [filteredProducts, setFilteredProducts] = useState(ProductData);
   const [currentPage, setCurrentPage] = useState(1);
-  const authToken = JSON.parse(localStorage.getItem('token'));
+  const authToken = JSON.parse(localStorage.getItem("token"));
 
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchItem(term);
     const filtered = ProductData.filter(
       (product) =>
-        product.title.toLowerCase().includes(term) || product.category.toLowerCase().includes(term)
+        product.title.toLowerCase().includes(term) ||
+        product.category.toLowerCase().includes(term)
     );
     setFilteredProducts(filtered);
     setCurrentPage(1); // Reset to first page after search
   };
 
   const handleInsert = () => {
-    navigate('insert');
+    navigate("insert");
   };
 
   const handleUpdate = (id) => {
     navigate(`update/${id}`);
-  }
+  };
   // Pagination calculations
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
-  const currentProducts = filteredProducts.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+  const currentProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + PRODUCTS_PER_PAGE
+  );
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -55,8 +59,8 @@ function ProductsTable() {
     try {
       const res = await axios.get(`${url}product/all`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
+          Authorization: `Bearer ${authToken}`,
+        },
       });
       // console.log(res.data.data);
       setProductData(res.data.data);
@@ -64,7 +68,7 @@ function ProductsTable() {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
   useEffect(() => {
     myFun(); // Initial fetch
   }, []);
@@ -73,22 +77,26 @@ function ProductsTable() {
     try {
       const res = await axios.delete(`${url}product/delete/${id}`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
+          Authorization: `Bearer ${authToken}`,
+        },
       });
-      console.log(res.data)
+      console.log(res.data);
       toast.success("Product deleted successfully");
 
       // Update ProductData
-      const updatedProductData = ProductData.filter((product) => product._id !== id);
+      const updatedProductData = ProductData.filter(
+        (product) => product._id !== id
+      );
       setProductData(updatedProductData);
 
       // Update filteredProducts dynamically
-      setFilteredProducts(updatedProductData.filter(
-        (product) =>
-          product?.title.toLowerCase().includes(searchItem.toLowerCase()) ||
-          product?.category.toLowerCase().includes(searchItem.toLowerCase())
-      ));
+      setFilteredProducts(
+        updatedProductData.filter(
+          (product) =>
+            product?.title.toLowerCase().includes(searchItem.toLowerCase()) ||
+            product?.category.toLowerCase().includes(searchItem.toLowerCase())
+        )
+      );
     } catch (error) {
       console.log(error);
       toast.error("Failed to delete product");
@@ -106,7 +114,6 @@ function ProductsTable() {
     );
   }, [ProductData, searchItem]); // Watch ProductData and searchItem
 
-
   return (
     <>
       <motion.div
@@ -116,7 +123,9 @@ function ProductsTable() {
         className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700 mb-8"
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-100">Product List</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-100">
+            Product List
+          </h2>
           <div>
             <div className="relative flex items-center gap-5">
               <input
@@ -126,7 +135,10 @@ function ProductsTable() {
                 onChange={handleSearch}
                 value={searchItem}
               />
-              <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+              <Search
+                className="absolute left-3 top-2.5 text-gray-400"
+                size={18}
+              />
               <Button
                 radius="sm"
                 color="success"
@@ -194,13 +206,19 @@ function ProductsTable() {
                     {product.totalSell || 0}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                    <Tooltip content='Update' color='secondary'>
-                      <button className="text-indigo-400 bg-transparent border-1 border-gray-700 hover:text-indigo-300 mr-2" onClick={() => handleUpdate(product?._id)}>
+                    <Tooltip content="Update" color="secondary">
+                      <button
+                        className="text-indigo-400 bg-transparent border-1 border-gray-700 hover:text-indigo-300 mr-2"
+                        onClick={() => handleUpdate(product?._id)}
+                      >
                         <Edit size={20} />
                       </button>
                     </Tooltip>
-                    <Tooltip content='Delete' color='danger'>
-                      <button className="text-red-400 bg-transparent  border-1 border-gray-700 hover:text-red-300" onClick={() => handleDelete(product?._id)}>
+                    <Tooltip content="Delete" color="danger">
+                      <button
+                        className="text-red-400 bg-transparent  border-1 border-gray-700 hover:text-red-300"
+                        onClick={() => handleDelete(product?._id)}
+                      >
                         <Trash2 size={20} />
                       </button>
                     </Tooltip>
@@ -217,7 +235,9 @@ function ProductsTable() {
             onClick={handlePreviousPage}
             variant="light"
             color="primary"
-            className={`focus:outline-none ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`focus:outline-none ${
+              currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             Previous
           </Button>
@@ -229,7 +249,11 @@ function ProductsTable() {
             onClick={handleNextPage}
             variant="light"
             color="primary"
-            className={`focus:outline-none ${currentPage === totalPages ? " opacity-50 cursor-not-allowed" : " "}`}
+            className={`focus:outline-none ${
+              currentPage === totalPages
+                ? " opacity-50 cursor-not-allowed"
+                : " "
+            }`}
           >
             Next
           </Button>

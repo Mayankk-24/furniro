@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const UserSchema = mongoose.Schema(
   {
     firstname: {
@@ -57,6 +56,10 @@ const UserSchema = mongoose.Schema(
     },
     orderId: {
       type: String
+    },
+    coupan: {
+      type: Boolean,
+      default: false
     }
   },
   {

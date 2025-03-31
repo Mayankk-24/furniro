@@ -23,7 +23,9 @@ const CartSchema = mongoose.Schema({
         ref: "Category"
     },
     quantity: {
-        type: Number
+        type: Number,
+        required: true,
+        default: 1,
     },
     subtotal: {
         type: Number

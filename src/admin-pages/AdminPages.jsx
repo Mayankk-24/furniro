@@ -28,7 +28,7 @@ function AdminPages() {
         <Slidebar />
         <Routes>
           <Route path="/" element={<OverviewPage />} />
-          <Route path="products/" element={<ProductsPage />}></Route>
+          <Route path="products/" element={<ProductsPage />} />
           <Route path="products/insert" element={<ProductInsert />} />
           <Route path="products/update/:id" element={<ProductUpdate />} />
           <Route path="users" element={<UsersPage />} />

@@ -1,5 +1,6 @@
 const discount = require("../../models/discount_coupan.model");
 const Billing = require("../../models/billing.model");
+const User = require("../../models/user.model");
 const { status } = require("http-status");
 
 exports.alldiscount = async (req, res) => {
@@ -24,6 +25,7 @@ exports.alldiscount = async (req, res) => {
 
 exports.applydiscount = async (req, res) => {
     try {
+        const userId = req.user._id;
         const id = req.params.id;
         const billing_id = req.params.billing;
         const coupan = await discount.findById(id);
@@ -43,6 +45,19 @@ exports.applydiscount = async (req, res) => {
                 message: "Discount already applied"
             });
         }
+        const user = await User.findById({ _id: userId });
+        if (!user) {
+            return res.status(status.NOT_FOUND).json({
+                message: "User not found"
+            });
+        }
+        if (user.coupan === true) {
+            return res.status(status.BAD_REQUEST).json({
+                message: "You have already applied a coupan"
+            });
+        }
+        user.coupan = true;
+        await user.save();
         const updatedData = await Billing.findByIdAndUpdate(billing._id, { $inc: { total: -coupan.amount }, $set: { discountApplied: true } }, { new: true, runValidators: true });
         if (!updatedData) {
             return res.status(status.BAD_REQUEST).json({

@@ -144,10 +144,10 @@ function Header() {
             }).then(() => {
               window.location.reload(); // Refresh UI when user clicks OK
             });
-  
+
             onOpenChange(false); // Now closing after showing the alert
           }
-  
+
           setSubmitting(false);
         },
         prefill: {
@@ -189,7 +189,7 @@ function Header() {
         {isCartOpen && <AddToCart onClose={() => setIsCartOpen(!isCartOpen)} />}
       </div>
       <div className="bg-white w-full py-4 px-5 md:px-12 flex items-center justify-between">
-        <div id="left-sec" className="flex items-center">
+        <div id="left-sec" className="flex items-center hover:cursor-pointer">
           <img
             src="/Assets/Meubel House_Logos-05.png"
             alt="#"
@@ -221,7 +221,10 @@ function Header() {
             {/* Profile */}
             <PopoverRoot>
               <PopoverTrigger asChild>
-                <RiAccountCircleLine size={24} />
+                <RiAccountCircleLine
+                  size={24}
+                  className="hover:cursor-pointer"
+                />
               </PopoverTrigger>
               <PopoverContent width={"340px"}>
                 <PopoverArrow />
@@ -382,13 +385,23 @@ function Header() {
 
             {/* withdraw money wallet */}
             {heart ? (
-              <FaHeart size={24} onClick={() => setHeart(!heart)} color="red" />
+              <FaHeart
+                size={24}
+                className="hover:cursor-pointer"
+                onClick={() => setHeart(!heart)}
+                color="red"
+              />
             ) : (
-              <FaRegHeart size={24} onClick={() => setHeart(!heart)} />
+              <FaRegHeart
+                size={24}
+                className="hover:cursor-pointer"
+                onClick={() => setHeart(!heart)}
+              />
             )}
             <Badge badgeContent={carts?.length || 0} color="error">
               <MdOutlineShoppingCart
                 size={24}
+                className="hover:cursor-pointer"
                 onClick={() => setIsCartOpen(true)}
               />
             </Badge>
