@@ -105,8 +105,8 @@ function Checkout() {
           },
         });
         console.log(orderResponse.data);
-        const orderId = orderResponse.data.paymentResponse?.orderId;
-        const amount = orderResponse.data.paymentResponse?.amount;
+        const orderId = orderResponse.data?.orderId;
+        const amount = orderResponse.data?.amount;
         // **Step 2: Initialize Razorpay**
         const options = {
           key: "rzp_test_pUXJB2ZJXV0sMk", // Replace with Razorpay Key
@@ -121,13 +121,23 @@ function Checkout() {
             console.log(`Order ID: ${response.razorpay_order_id}`);
 
             // **Step 3: Verify Payment in Backend**
-            // await axios.post(`${url}billing/verify-payment`, {
-            //     ...response,
-            // });
+
             try {
               console.log("Payment Success:", response);
-              navigate(`/thanks`);
-              setLoading(false);
+              const res = await axios.put(
+                `${url}billing/payment-success/${response.razorpay_order_id}`,
+                {},
+                {
+                  headers: {
+                    Authorization: `Bearer ${authData.token}`,
+                  },
+                }
+              );
+              if (res.status == 200) {
+                navigate(`/thanks`);
+                localStorage.removeItem("carts");
+                setLoading(false);
+              }
             } catch (error) {
               console.error("Error handling response:", error);
               setLoading(false);
@@ -175,6 +185,7 @@ function Checkout() {
         if (orderResponse.status == 200) {
           toast.success("Payment successfull!");
           setLoading(false);
+          localStorage.removeItem("carts");
           navigate(`/thanks`);
         }
       } catch (error) {

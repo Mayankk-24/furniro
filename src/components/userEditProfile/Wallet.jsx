@@ -191,8 +191,8 @@ const Wallet = ({amount}) => {
               </div>
             }
           >
-            {transactions.map((txn) => (
-              <TableRow key={txn.id}>
+            {transactions.map((txn,index) => (
+              <TableRow key={index}>
                 <TableCell>
                   <span
                     className={`flex items-center gap-2 justify-start font-semibold ${

@@ -122,7 +122,7 @@ function Header() {
         },
       });
       console.log(res.data);
-      const orderId = res.data.paymentResponse?.orderId;
+      const orderId = res.data.paymentResponse?.id;
       const amount = res.data.paymentResponse?.amount;
       const options = {
         key: "rzp_test_pUXJB2ZJXV0sMk", // Replace with Razorpay Key

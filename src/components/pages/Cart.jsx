@@ -38,6 +38,7 @@ function Cart() {
   const navigate = useNavigate();
   const { removeCart } = addCartsStore();
   const [Quantity, setQuantity] = useState(0);
+  const [Discount, setDiscount] = useState([]);
 
   const fetchCart = async () => {
     const authData = await auth();
@@ -58,6 +59,23 @@ function Cart() {
 
   useEffect(() => {
     fetchCart();
+  }, []);
+  const fetchDis = async () => {
+    const authData = await auth();
+    try {
+      const response = await axios.get(`${url}discount/coupans`, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      });
+      setDiscount(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDis();
   }, []);
 
   const handleDelete = async (id, productId, p_name) => {
@@ -123,6 +141,22 @@ function Cart() {
     }
   };
 
+  const handleApply = async (id) => {
+    const authToken = await auth();
+    try {
+      const res = await axios.post(`${url}discount/apply/${id}`, {},{
+        headers: {
+          Authorization: `Bearer ${authToken.token}`,
+        },
+      });
+      if (res.status === 200) {
+        toast.success("Discount applied successfully");
+        fetchCart();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <HeroCard name={"Cart"} />
@@ -262,7 +296,7 @@ function Cart() {
                     {cart &&
                       cart
                         ?.reduce(
-                          (total, item) => total + item.price * item.quantity,
+                          (total, item) => total + item.subtotal * item.quantity,
                           0
                         )
                         .toLocaleString("en-IN")}
@@ -284,7 +318,7 @@ function Cart() {
                     {cart &&
                       cart
                         ?.reduce(
-                          (total, item) => total + item.price * item.quantity,
+                          (total, item) => total + item.subtotal * item.quantity,
                           0
                         )
                         .toLocaleString("en-IN")}
@@ -293,9 +327,12 @@ function Cart() {
                 <div className="flex items-center justify-between pt-8">
                   <div className="flex justify-between items-center w-full border border-gray-600/50 hover:border-black py-2 px-3.5 rounded-lg">
                     <span className="text-[#1c252e] font-medium">
-                      DISCOUNT50
+                      {Discount[0]?.name || "No Discount Available"}
                     </span>
-                    <button className="py-1 px-2 bg-transparent text-[#00A76F] hover:bg-[#00a76f17] transition-background duration-300 font-medium focus:outline-none">
+                    <button
+                      className="py-1 px-2 bg-transparent text-[#00A76F] hover:bg-[#00a76f17] transition-background duration-300 font-medium focus:outline-none"
+                      onClick={() => handleApply(Discount[0]?._id)}
+                    >
                       Apply
                     </button>
                   </div>

@@ -18,7 +18,6 @@ export default {
       }
     },
   },
-  darkMode: false,
   plugins: [nextui(),heroui()],
 }
 

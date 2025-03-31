@@ -11,10 +11,6 @@ const DiscountSchema = mongoose.Schema({
     endDate: {
         type: Date,
         required: true
-    },
-    description: {
-        type: String,
-        required: true
     }
 }, {
     timestamps: true

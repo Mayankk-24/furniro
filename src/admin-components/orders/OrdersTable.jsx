@@ -308,10 +308,10 @@ function OrdersTable() {
                                         {/* Product Name(s) */}
                                         <div>
                                             <h2 className="text-lg font-bold">Product Name(s)</h2>
-                                            {Array.isArray(orderDetails.productname) ? (
-                                                orderDetails.productname.map((name, index) => (
+                                            {Array.isArray(orderDetails.products) ? (
+                                                orderDetails.products.map((name, index) => (
                                                     <p key={index} className="text-gray-600">
-                                                        {name}
+                                                        {name.productname}
                                                     </p>
                                                 ))
                                             ) : (
@@ -325,6 +325,18 @@ function OrdersTable() {
                                             <h2 className="text-lg font-bold">Order Date</h2>
                                             <p className="text-gray-600">
                                                 {new Date(orderDetails.orderdate).toLocaleString()}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <h2 className="text-lg font-bold">Payment type</h2>
+                                            <p className="text-gray-600">
+                                                {orderDetails.orderType}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <h2 className="text-lg font-bold">Shipping address</h2>
+                                            <p className="text-gray-600">
+                                                {orderDetails.address}
                                             </p>
                                         </div>
 
